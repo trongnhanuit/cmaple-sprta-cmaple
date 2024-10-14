@@ -10,7 +10,7 @@ properties([
     	string(name: 'CMAPLE_BASELINE_BRANCH', defaultValue: 'sprta', description: 'Branch to build CMAPLE baseline'),
     	string(name: 'CMAPLE_BASELINE_COMMIT', defaultValue: '29250bd', description: 'Commit ID of the CMAPLE baseline'),
     	booleanParam(defaultValue: false, description: 'Re-build the latest CMAPLE?', name: 'BUILD_CMAPLE'),
-        string(name: 'CMAPLE_BRANCH', defaultValue: 'main', description: 'Branch to build the latest CMAPLE'),
+        string(name: 'CMAPLE_BRANCH', defaultValue: 'sprta', description: 'Branch to build the latest CMAPLE'),
         booleanParam(defaultValue: false, description: 'Download testing data?', name: 'DOWNLOAD_DATA'),
         booleanParam(defaultValue: false, description: 'Infer ML trees?', name: 'INFER_TREE'),
         booleanParam(defaultValue: false, description: 'Compute SPRTA by CMAPLE baseline?', name: 'COMPUTE_SPRTA_CMAPLE_BASELINE'),
