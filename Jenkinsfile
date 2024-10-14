@@ -106,7 +106,7 @@ pipeline {
                             git checkout ${params.CMAPLE_BASELINE_BRANCH}
                             git reset --hard ${params.CMAPLE_BASELINE_COMMIT}
                             mkdir -p ${BUILD_OUTPUT_DIR}
-                            cd ${BUILD_OUTPUT_DIR}
+                            cd ${BUILD_BASELINE}
                             rm -rf *
                             exit
                             EOF
@@ -116,7 +116,7 @@ pipeline {
                             ssh -tt ${NCI_ALIAS} ${SSH_COMP_NODE}<< EOF
                         
                             chmod +x ${SCRIPTS_DIR}/build_cmaple_baseline.sh 
-                            sh ${SCRIPTS_DIR}/build_cmaple_baseline.sh ${CMAPLE_BASELINE_NAME} ${CMAPLE_BASELINE_DIR} 
+                            sh ${SCRIPTS_DIR}/build_cmaple_baseline.sh ${BUILD_BASELINE} ${CMAPLE_BASELINE_DIR} 
                            
                             exit
                             EOF
