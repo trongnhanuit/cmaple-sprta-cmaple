@@ -6,10 +6,10 @@
 
 properties([
     parameters([
-    	booleanParam(defaultValue: false, description: 'Build CMAPLE baseline?', name: 'BUILD_CMAPLE_BASELINE'),
-    	string(name: 'CMAPLE_BASELINE_BRANCH', defaultValue: 'sprta', description: 'Branch to build CMAPLE baseline'),
-    	string(name: 'CMAPLE_BASELINE_COMMIT', defaultValue: '29250bd', description: 'Commit ID of the CMAPLE baseline'),
-    	booleanParam(defaultValue: false, description: 'Re-build the latest CMAPLE?', name: 'BUILD_CMAPLE'),
+        booleanParam(defaultValue: false, description: 'Build CMAPLE baseline?', name: 'BUILD_CMAPLE_BASELINE'),
+        string(name: 'CMAPLE_BASELINE_BRANCH', defaultValue: 'sprta', description: 'Branch to build CMAPLE baseline'),
+        string(name: 'CMAPLE_BASELINE_COMMIT', defaultValue: '29250bd', description: 'Commit ID of the CMAPLE baseline'),
+        booleanParam(defaultValue: false, description: 'Re-build the latest CMAPLE?', name: 'BUILD_CMAPLE'),
         string(name: 'CMAPLE_BRANCH', defaultValue: 'sprta', description: 'Branch to build the latest CMAPLE'),
         booleanParam(defaultValue: false, description: 'Download testing data?', name: 'DOWNLOAD_DATA'),
         booleanParam(defaultValue: false, description: 'Infer ML trees?', name: 'INFER_TREE'),
@@ -27,8 +27,8 @@ properties([
 pipeline {
     agent any
     environment {
-    	GITHUB_REPO_URL = "https://github.com/iqtree/cmaple.git"
-    	CMAPLE_BASELINE_NAME = "cmaple_baseline"
+        GITHUB_REPO_URL = "https://github.com/iqtree/cmaple.git"
+        CMAPLE_BASELINE_NAME = "cmaple_baseline"
         NCI_ALIAS = "gadi"
         SSH_COMP_NODE = " "
         WORKING_DIR = "/scratch/dx61/tl8625/cmaple/ci-cd"
@@ -80,46 +80,46 @@ pipeline {
         stage('Copy scripts') {
             steps {
                 script {
-                    	sh """
-                        	ssh -tt ${NCI_ALIAS} << EOF
+                        sh """
+                            ssh -tt ${NCI_ALIAS} << EOF
                         
-                        	mkdir -p ${WORKING_DIR}
-                        	mkdir -p ${SCRIPTS_DIR}
-                        	exit
-                        	EOF
+                            mkdir -p ${WORKING_DIR}
+                            mkdir -p ${SCRIPTS_DIR}
+                            exit
+                            EOF
                         """
-                    	sh "scp -r scripts/* ${NCI_ALIAS}:${SCRIPTS_DIR}"
+                        sh "scp -r scripts/* ${NCI_ALIAS}:${SCRIPTS_DIR}"
                 }
             }
         }
         stage('Build the CMAPLE baseline') {
             steps {
                 script {
-                	if (params.BUILD_CMAPLE_BASELINE) {
-                    	sh """
-                        	ssh -tt ${NCI_ALIAS} << EOF
+                    if (params.BUILD_CMAPLE_BASELINE) {
+                        sh """
+                            ssh -tt ${NCI_ALIAS} << EOF
                         
-                        	mkdir -p ${WORKING_DIR}
-                        	cd  ${WORKING_DIR}
-                        	git clone --recursive ${GITHUB_REPO_URL} ${CMAPLE_BASELINE_DIR}
-                        	cd ${CMAPLE_BASELINE_NAME}
-                        	git checkout ${params.CMAPLE_BASELINE_BRANCH}
-                        	git reset --hard ${params.CMAPLE_BASELINE_COMMIT}
-                        	mkdir -p ${BUILD_OUTPUT_DIR}
-                        	cd ${BUILD_OUTPUT_DIR}
-                        	rm -rf *
-                        	exit
-                        	EOF
+                            mkdir -p ${WORKING_DIR}
+                            cd  ${WORKING_DIR}
+                            git clone --recursive ${GITHUB_REPO_URL} ${CMAPLE_BASELINE_DIR}
+                            cd ${CMAPLE_BASELINE_NAME}
+                            git checkout ${params.CMAPLE_BASELINE_BRANCH}
+                            git reset --hard ${params.CMAPLE_BASELINE_COMMIT}
+                            mkdir -p ${BUILD_OUTPUT_DIR}
+                            cd ${BUILD_OUTPUT_DIR}
+                            rm -rf *
+                            exit
+                            EOF
                         """
                         
                         sh """
-                        	ssh -tt ${NCI_ALIAS} ${SSH_COMP_NODE}<< EOF
+                            ssh -tt ${NCI_ALIAS} ${SSH_COMP_NODE}<< EOF
                         
-                        	chmod +x ${SCRIPTS_DIR}/build_cmaple_baseline.sh 
-                        	sh ${SCRIPTS_DIR}/build_cmaple_baseline.sh ${CMAPLE_BASELINE_NAME} ${CMAPLE_BASELINE_DIR} 
-                       	
-                        	exit
-                        	EOF
+                            chmod +x ${SCRIPTS_DIR}/build_cmaple_baseline.sh 
+                            sh ${SCRIPTS_DIR}/build_cmaple_baseline.sh ${CMAPLE_BASELINE_NAME} ${CMAPLE_BASELINE_DIR} 
+                           
+                            exit
+                            EOF
                         """
 
                     }
@@ -129,10 +129,10 @@ pipeline {
                 }
             }
         }
-    	stage("Build the latest CMAPLE") {
+        stage("Build the latest CMAPLE") {
             steps {
                 script {
-                	if (params.BUILD_CMAPLE) {
+                    if (params.BUILD_CMAPLE) {
                         echo 'Building CMAPLE'
                         // trigger jenkins cmaple-build
                         build job: 'cmaple-build', parameters: [string(name: 'BRANCH', value: CMAPLE_BRANCH),
@@ -148,7 +148,7 @@ pipeline {
         stage("Download testing data & Infer ML trees") {
             steps {
                 script {
-                	if (params.DOWNLOAD_DATA || params.INFER_TREE) {
+                    if (params.DOWNLOAD_DATA || params.INFER_TREE) {
                         // trigger jenkins cmaple-tree-inference
                         build job: 'cmaple-tree-inference', parameters: [booleanParam(name: 'DOWNLOAD_DATA', value: DOWNLOAD_DATA),
                         booleanParam(name: 'INFER_TREE', value: INFER_TREE),
@@ -165,12 +165,12 @@ pipeline {
         stage('Compute SPRTA by CMAPLE baseline') {
             steps {
                 script {
-                	if (params.COMPUTE_SPRTA_CMAPLE_BASELINE) {
-                    	sh """
-                        	ssh -tt ${NCI_ALIAS} ${SSH_COMP_NODE}<< EOF
-                        	sh ${SCRIPTS_DIR}/cmaple_baseline_compute_sprta.sh ${ALN_DIR} ${TREE_DIR} ${CMAPLE_BASELINE_PATH} ${ML_TREE_PREFIX} ${CMAPLE_BASELINE_TREE_PREFIX} ${params.MODEL} ${params.BLENGTHS_FIXED} ${params.NOT_REROOT} ${params.ZERO_LENGTH_BRANCHES} ${params.OUT_ALT_SPR}
-                        	exit
-                        	EOF
+                    if (params.COMPUTE_SPRTA_CMAPLE_BASELINE) {
+                        sh """
+                            ssh -tt ${NCI_ALIAS} ${SSH_COMP_NODE}<< EOF
+                            sh ${SCRIPTS_DIR}/cmaple_baseline_compute_sprta.sh ${ALN_DIR} ${TREE_DIR} ${CMAPLE_BASELINE_PATH} ${ML_TREE_PREFIX} ${CMAPLE_BASELINE_TREE_PREFIX} ${params.MODEL} ${params.BLENGTHS_FIXED} ${params.NOT_REROOT} ${params.ZERO_LENGTH_BRANCHES} ${params.OUT_ALT_SPR}
+                            exit
+                            EOF
                         """
                     }
                     else {
@@ -182,12 +182,12 @@ pipeline {
         stage('Compute SPRTA by the latest CMAPLE') {
             steps {
                 script {
-                	if (params.COMPUTE_SPRTA_CMAPLE) {
-                    	sh """
-                        	ssh -tt ${NCI_ALIAS} ${SSH_COMP_NODE}<< EOF
-                        	sh ${SCRIPTS_DIR}/cmaple_compute_sprta.sh ${ALN_DIR} ${TREE_DIR} ${CMAPLE_PATH} ${CMAPLE_BASELINE_TREE_PREFIX} ${CMAPLE_SPRTA_TREE_PREFIX} ${params.MODEL} ${params.BLENGTHS_FIXED} ${params.NOT_REROOT} ${params.ZERO_LENGTH_BRANCHES} ${params.OUT_ALT_SPR}
-                        	exit
-                        	EOF
+                    if (params.COMPUTE_SPRTA_CMAPLE) {
+                        sh """
+                            ssh -tt ${NCI_ALIAS} ${SSH_COMP_NODE}<< EOF
+                            sh ${SCRIPTS_DIR}/cmaple_compute_sprta.sh ${ALN_DIR} ${TREE_DIR} ${CMAPLE_PATH} ${CMAPLE_BASELINE_TREE_PREFIX} ${CMAPLE_SPRTA_TREE_PREFIX} ${params.MODEL} ${params.BLENGTHS_FIXED} ${params.NOT_REROOT} ${params.ZERO_LENGTH_BRANCHES} ${params.OUT_ALT_SPR}
+                            exit
+                            EOF
                         """
 
                     }
@@ -200,15 +200,15 @@ pipeline {
         stage('Visualize SPRTA scores computed by the two versions of CMAPLE') {
             steps {
                 script {
-                	if (params.REMOVE_OUTPUT) {
-                		sh """
-                        	ssh -tt ${NCI_ALIAS} << EOF
-                        	rm -f ${OUT_DIR}/*
-                        	exit
-                        	EOF
+                    if (params.REMOVE_OUTPUT) {
+                        sh """
+                            ssh -tt ${NCI_ALIAS} << EOF
+                            rm -f ${OUT_DIR}/*
+                            exit
+                            EOF
                         """
                         sh "rm -f {LOCAL_OUT_DIR}/*"
-                	}
+                    }
                     sh """
                         ssh -tt ${NCI_ALIAS} ${SSH_COMP_NODE}<< EOF
                                               
@@ -217,19 +217,19 @@ pipeline {
                         exit
                         EOF
                         """
-        			sh "mkdir -p {LOCAL_OUT_DIR} && rsync -avz --include=\"*/*\" ${NCI_ALIAS}:${OUT_DIR}/ ${LOCAL_OUT_DIR}"
-        			sh "mkdir -p {LOCAL_OUT_DIR} && rsync -avz --include=\"*/*\" ${NCI_ALIAS}:${TREE_DIR} ${LOCAL_OUT_DIR}"
-        			if (params.OUT_ALT_SPR)
-        			{
-        				sh "mkdir -p mkdir -p ${LOCAL_OUT_DIR}/tsv && rsync -avz --include=\"*tsv\" --exclude=\"*\" ${NCI_ALIAS}:${DATA_DIR}/aln/ ${LOCAL_OUT_DIR}/tsv/"
-        			}
+                    sh "mkdir -p {LOCAL_OUT_DIR} && rsync -avz --include=\"*/*\" ${NCI_ALIAS}:${OUT_DIR}/ ${LOCAL_OUT_DIR}"
+                    sh "mkdir -p {LOCAL_OUT_DIR} && rsync -avz --include=\"*/*\" ${NCI_ALIAS}:${TREE_DIR} ${LOCAL_OUT_DIR}"
+                    if (params.OUT_ALT_SPR)
+                    {
+                        sh "mkdir -p mkdir -p ${LOCAL_OUT_DIR}/tsv && rsync -avz --include=\"*tsv\" --exclude=\"*\" ${NCI_ALIAS}:${DATA_DIR}/aln/ ${LOCAL_OUT_DIR}/tsv/"
+                    }
                 }
             }
         }
         stage ('Verify') {
             steps {
                 script {
-                	sh """
+                    sh """
                         ssh -tt ${NCI_ALIAS} << EOF
                         cd  ${WORKING_DIR}
                         echo "Files in ${WORKING_DIR}"
