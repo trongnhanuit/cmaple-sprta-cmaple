@@ -106,6 +106,7 @@ pipeline {
                             git checkout ${params.CMAPLE_BASELINE_BRANCH}
                             git reset --hard ${params.CMAPLE_BASELINE_COMMIT}
                             mkdir -p ${BUILD_OUTPUT_DIR}
+                            mkdir -p ${BUILD_BASELINE}
                             cd ${BUILD_BASELINE}
                             rm -rf *
                             exit
