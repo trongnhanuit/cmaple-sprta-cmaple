@@ -97,8 +97,6 @@ pipeline {
             steps {
                 script {
                 	if (params.BUILD_CMAPLE_BASELINE) {
-                    	
-                    	# clone CMAPLE baseline
                     	sh """
                         	ssh -tt ${NCI_ALIAS} << EOF
                         
@@ -115,8 +113,6 @@ pipeline {
                         	EOF
                         """
                         
-                        
-                        # build the CMAPLE baseline
                         sh """
                         	ssh -tt ${NCI_ALIAS} ${SSH_COMP_NODE}<< EOF
                         
