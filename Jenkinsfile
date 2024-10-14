@@ -71,7 +71,6 @@ pipeline {
                         ALN_DIR = "${DATA_DIR}/aln"
                         TREE_DIR = "${DATA_DIR}/tree"
                         OUT_DIR = "${DATA_DIR}/output"
-                        MAPLE_PATH = "${WORKING_DIR}/${MAPLE_REPO_NAME}/${MAPLE_VERSION}"
                         PYPY_PATH="/project/AliSim/tools/pypy3.10-v7.3.17-linux64/bin/pypy3.10"
                         
                     }
